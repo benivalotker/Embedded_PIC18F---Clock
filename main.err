@@ -1,1 +1,30 @@
-Error[1027] D:\Workspace\Embeded\mplab\Shenkar\beni + michael final project\main.c 50 : unable to locate 'time.h'
+Warning[2066] D:\Workspace\Embeded\mplab\Shenkar\beni + michael final project\main.c 418 : type qualifier mismatch in assignment
+Warning[2054] D:\Workspace\Embeded\mplab\Shenkar\beni + michael final project\main.c 594 : suspicious pointer conversion
+Warning[2054] D:\Workspace\Embeded\mplab\Shenkar\beni + michael final project\main.c 595 : suspicious pointer conversion
+Warning[2054] D:\Workspace\Embeded\mplab\Shenkar\beni + michael final project\main.c 596 : suspicious pointer conversion
+Warning[2054] D:\Workspace\Embeded\mplab\Shenkar\beni + michael final project\main.c 597 : suspicious pointer conversion
+Warning[2054] D:\Workspace\Embeded\mplab\Shenkar\beni + michael final project\main.c 598 : suspicious pointer conversion
+Warning[2058] D:\Workspace\Embeded\mplab\Shenkar\beni + michael final project\main.c 600 : call of function without prototype
+Warning[2058] D:\Workspace\Embeded\mplab\Shenkar\beni + michael final project\main.c 613 : call of function without prototype
+Warning[2058] D:\Workspace\Embeded\mplab\Shenkar\beni + michael final project\main.c 616 : call of function without prototype
+Warning[2058] D:\Workspace\Embeded\mplab\Shenkar\beni + michael final project\main.c 619 : call of function without prototype
+Warning[2058] D:\Workspace\Embeded\mplab\Shenkar\beni + michael final project\main.c 626 : call of function without prototype
+Warning[2054] D:\Workspace\Embeded\mplab\Shenkar\beni + michael final project\main.c 644 : suspicious pointer conversion
+Warning[2054] D:\Workspace\Embeded\mplab\Shenkar\beni + michael final project\main.c 645 : suspicious pointer conversion
+Warning[2054] D:\Workspace\Embeded\mplab\Shenkar\beni + michael final project\main.c 646 : suspicious pointer conversion
+Warning[2058] D:\Workspace\Embeded\mplab\Shenkar\beni + michael final project\main.c 649 : call of function without prototype
+Warning[2068] D:\Workspace\Embeded\mplab\Shenkar\beni + michael final project\main.c 680 : obsolete use of implicit 'int' detected
+Warning[2058] D:\Workspace\Embeded\mplab\Shenkar\beni + michael final project\main.c 695 : call of function without prototype
+Warning[2053] D:\Workspace\Embeded\mplab\Shenkar\beni + michael final project\main.c 740 : return value expected
+Warning[2068] D:\Workspace\Embeded\mplab\Shenkar\beni + michael final project\main.c 745 : obsolete use of implicit 'int' detected
+Warning[2066] D:\Workspace\Embeded\mplab\Shenkar\beni + michael final project\main.c 748 : type qualifier mismatch in assignment
+Warning[2058] D:\Workspace\Embeded\mplab\Shenkar\beni + michael final project\main.c 767 : call of function without prototype
+Warning[2068] D:\Workspace\Embeded\mplab\Shenkar\beni + michael final project\main.c 817 : obsolete use of implicit 'int' detected
+Warning[2066] D:\Workspace\Embeded\mplab\Shenkar\beni + michael final project\main.c 820 : type qualifier mismatch in assignment
+Warning[2058] D:\Workspace\Embeded\mplab\Shenkar\beni + michael final project\main.c 839 : call of function without prototype
+Warning[2058] D:\Workspace\Embeded\mplab\Shenkar\beni + michael final project\main.c 945 : call of function without prototype
+Warning[2065] D:\Workspace\Embeded\mplab\Shenkar\beni + michael final project\main.c 945 : static function 'YourLowPriorityISRCode' never referenced
+Warning[2065] D:\Workspace\Embeded\mplab\Shenkar\beni + michael final project\main.c 945 : static function 'YourHighPriorityISRCode' never referenced
+Warning[2065] D:\Workspace\Embeded\mplab\Shenkar\beni + michael final project\main.c 945 : static function 'YourLowPriorityISRCode' never referenced
+Warning[2065] D:\Workspace\Embeded\mplab\Shenkar\beni + michael final project\main.c 945 : static function 'YourHighPriorityISRCode' never referenced
+Warning[2064] D:\Workspace\Embeded\mplab\Shenkar\beni + michael final project\main.c 945 : static function 'ProcessIO' not defined

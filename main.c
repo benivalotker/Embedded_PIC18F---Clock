@@ -315,6 +315,9 @@ void displayMode();
 void displayMode();
 void setDate();
 void Alarm();
+
+int clockType = 1;
+int setAlarm  = 0;
 //  =======================     Time ===================================
 #define FOSC        12000000
 #define CLOCK_TYPE  4
@@ -330,9 +333,23 @@ typedef struct
     BYTE hSec;
 }TIMER;
 
+typedef struct
+{
+    /* Current date */
+    BYTE day;
+    BYTE month;
+}DATE;
+
+typedef struct
+{
+    BYTE hour;
+    BYTE min;
+}ALARM;
+
 /* Internal Timer Structure to hold its current values */
 static TIMER TMR0;
-
+static DATE  DA0;
+static ALARM  AL0;
 /* Internal globals to hold the initial value of the timer registers */
 static BYTE count0L;
 static BYTE count0H;
@@ -355,6 +372,14 @@ void timer_initTimer0(BOOL useInterrupt)
     TMR0.sec = 0;
     TMR0.hSec = 0;
 
+	/* clear the date */
+	DA0.day = 01;
+	DA0.month = 01;
+
+	/* Clear the alarm values */
+    AL0.hour = 0;
+    AL0.min = 0;
+ 
     /* Compute the counting registers values */
     count = 0xFFFF - (FOSC/CLOCK_TYPE/PRESCALE/100) + RL_OFFSET; // Set count to centisecond
     count0H = (count >> 8);
@@ -393,11 +418,7 @@ void timer_showTimer0(int y, int x)
     sprintf((char*)timer, "%02u:%02u:%02u", TMR0.hour, TMR0.min, TMR0.sec);
 
     /* Put time message in the screen */
-    oledPutString(timer, y, x);
-	
-		
-	
-		
+    oledPutString(timer, y, x);		
 }
 
 void timer_increamentTimer0(BYTE inc)
@@ -540,16 +561,32 @@ char touchButtons()
 	if(scrollD > 980)
 		return 'D';
 
+}
 
+int potentiometer()
+{
+	int i;
+	char str[30];
+
+	ADCON0bits.CHS = 4;		
+	ADCON0bits.GO = 1;	
+	while(ADCON0bits.GO);
+
+	itoa(ADRES, str);					
+
+	//Fill the selected item in main menu bt potentimeter current value
+	if(ADRES <= 1200 && ADRES > 750){ return 6;}
+	if(ADRES < 750 && ADRES > 500){ return 5;}
+	if(ADRES < 500 && ADRES > 250){ return 4;}
+	if(ADRES < 250 && ADRES >= 0){ return 3;}
 }
 
 /*  =========================== menu ================================ */
 void mainMenu()
 {
-	char touch = 'f';
-	int count = 3; 
+ 	int potenNum;
 	BOOL button;
-	oledWriteChar1x(0x3C, count + 0xB0,120);
+	oledWriteChar1x(0x3C, 3 + 0xB0,120);
 
 	while(1)
 	{
@@ -559,28 +596,15 @@ void mainMenu()
 		oledPutROMString("2 - Set Time      ",4,0) ;
 		oledPutROMString("3 - Set Date      ",5,0) ;	
 		oledPutROMString("4 - Alarm         ",6,0) ;
-		
-		touch = touchButtons();
-		if(touch == 'U')
-		{		
-			oledWriteChar1x(0x20, count + 0xB0,120);
-			count -= 1;
-			if(count < 3)
-				count =3;	
-			oledWriteChar1x(0x3C, count + 0xB0,120);
-		}
-		if(touch == 'D')
-		{
-			oledWriteChar1x(0x20, count + 0xB0,120);
-			count += 1;
-			if(count > 6)
-				count = 6;
-			oledWriteChar1x(0x3C, count + 0xB0,120);
-		}
 
-		button = CheckButtonPressed();
-       	if(button == TRUE){
-			switch(count)
+		potenNum = potentiometer();
+		oledWriteChar1x(0x3C, potenNum   + 0xB0,120);
+		oledWriteChar1x(0x20, potenNum-1 + 0xB0,120);
+		oledWriteChar1x(0x20, potenNum+1 + 0xB0,120);
+		
+
+       	if(CheckButtonPressed() == TRUE){
+			switch(potenNum)
 			{
 				case 3:
 					displayMode();	
@@ -589,18 +613,22 @@ void mainMenu()
 					setTime();	
 					break;
 				case 5:
-					displayMode();	
+					setDate();	
 					break;
 				case 6:
-					displayMode();	
+					Alarm();	
 					break;
 				default:
 					break;
 			}
+		}	
+
+		if(touchButtons() == 'L')
+		{
+			FillDisplay(0x00);
+			return;
 		}
-		
 	} 
-	
 }
 
 void displayMode()
@@ -624,7 +652,7 @@ void displayMode()
 			oledWriteChar1x(0x20, count + 0xB0,120);
 			count -= 1;
 			if(count < 3)
-				count =3;	
+				count =3;
 			oledWriteChar1x(0x3C, count + 0xB0,120);
 		}
 		if(touch == 'D')
@@ -635,9 +663,17 @@ void displayMode()
 				count = 4;
 			oledWriteChar1x(0x3C, count + 0xB0,120);
 		}
+		
+		if(CheckButtonPressed() == TRUE)
+		{
+			if(count == 3)
+				clockType = 2;
+			if(count == 4)
+				clockType = 1;
 
-		if(touch == 'L')
+			FillDisplay(0x00);
 			return;
+		}
 	}
 }
 
@@ -661,7 +697,7 @@ setTime()
 		{		
 			FillDisplay(0x00);
 			count -= 1;
-			row -= 16;
+			row -= 18;
 			if(count < 1)
 			{
 				row = 50;
@@ -674,44 +710,178 @@ setTime()
 		{
 			FillDisplay(0x00);
 			count += 1;
-			row += 16; 
-			if(count > 3)
+			row += 18; 
+			if(count > 2)
 			{
-				row = 85;
-				count = 3;
+				row = 68;
+				count = 2;
 			}
 			oledWriteChar1x(0X5F, 5 + 0xB0, row);
 			oledWriteChar1x(0X5F, 5 + 0xB0, row+6);
 		}
 
 		if(row == 50){
-			if(touch == 'U' && TMR0.hour < 22)
+			if(touch == 'U' && TMR0.hour < 24)
 				TMR0.hour  += 1;
 			if(touch == 'D' && TMR0.hour > 1)
 				TMR0.hour  -= 1;
 		}
 
-		if(row == 66){
+		if(row == 68){
 			if(touch == 'U' && TMR0.min < 59)
 				TMR0.min   += 1;
 			if(touch == 'D' && TMR0.min > 0)
 				TMR0.min  -= 1;
 		}
 
-		if(row == 82){
-			if(touch == 'U')
+		button = CheckButtonPressed();
+       	if(button == TRUE)
+		{
+			return;
+		}
+	}
+}
+
+showDate(int y, int x)
+{
+	static BYTE date[20] = ""; // Time message buffer
+    sprintf((char*)date, "%02u/%02u", DA0.day , DA0.month);
+    oledPutString(date, y, x);
+}
+
+void setDate()
+{
+	char touch = 'F';
+	int count = 1; 
+	int row = 50;
+    BOOL button;
+
+	FillDisplay(0x00);
+	oledWriteChar1x(0X5F, 5 + 0xB0, row);
+	oledWriteChar1x(0X5F, 5 + 0xB0, row+6);
+
+	while(1)
+	{
+		showDate(4, 50);	
+		
+		touch = touchButtons();
+		if(touch == 'L')
+		{		
+			FillDisplay(0x00);
+			count -= 1;
+			row -= 18;
+			if(count < 1)
 			{
-				TMR0.sec   += 1;
+				row = 50;
+				count = 1;
 			}
-			if(touch == 'D')
+			oledWriteChar1x(0X5F, 5 + 0xB0, row);
+			oledWriteChar1x(0X5F, 5 + 0xB0, row+6);
+		}
+		if(touch == 'R')
+		{
+			FillDisplay(0x00);
+			count += 1;
+			row += 18; 
+			if(count > 2)
 			{
-				TMR0.sec   -= 1;
+				row = 68;
+				count = 2;
 			}
+			oledWriteChar1x(0X5F, 5 + 0xB0, row);
+			oledWriteChar1x(0X5F, 5 + 0xB0, row+6);
+		}
+
+		if(row == 50){
+			if(touch == 'U' && DA0.day < 31)
+				DA0.day  += 1;
+			if(touch == 'D' && DA0.day > 1)
+				DA0.day  -= 1;
+		}
+
+		if(row == 68){
+			if(touch == 'U' && DA0.month < 12)
+				DA0.month   += 1;
+			if(touch == 'D' && DA0.month > 1)
+				DA0.month  -= 1;
 		}
 
 		button = CheckButtonPressed();
        	if(button == TRUE)
 		{
+			return;
+		}
+	}
+}
+
+showAlarm(int y, int x)
+{
+	static BYTE alarm[20] = ""; // Time message buffer
+    sprintf((char*)alarm, "%02u:%02u", AL0.hour, AL0.min);
+    oledPutString(alarm, y, x);
+}
+
+void Alarm()
+{
+	char touch = 'F';
+	int count = 1; 
+	int row = 50;
+    BOOL button;
+
+	FillDisplay(0x00);
+	oledWriteChar1x(0X5F, 5 + 0xB0, row);
+	oledWriteChar1x(0X5F, 5 + 0xB0, row+6);
+
+	while(1)
+	{
+		showAlarm(4, 50);	
+		
+		touch = touchButtons();
+		if(touch == 'L')
+		{		
+			FillDisplay(0x00);
+			count -= 1;
+			row -= 18;
+			if(count < 1)
+			{
+				row = 50;
+				count = 1;
+			}
+			oledWriteChar1x(0X5F, 5 + 0xB0, row);
+			oledWriteChar1x(0X5F, 5 + 0xB0, row+6);
+		}
+		if(touch == 'R')
+		{
+			FillDisplay(0x00);
+			count += 1;
+			row += 18; 
+			if(count > 2)
+			{
+				row = 68;
+				count = 2;
+			}
+			oledWriteChar1x(0X5F, 5 + 0xB0, row);
+			oledWriteChar1x(0X5F, 5 + 0xB0, row+6);
+		}
+
+		if(row == 50){
+			if(touch == 'U' && AL0.hour < 24)
+				AL0.hour  += 1;
+			if(touch == 'D' && AL0.hour > 1)
+				AL0.hour  -= 1;
+		}
+
+		if(row == 68){
+			if(touch == 'U' && AL0.min < 59)
+				AL0.min   += 1;
+			if(touch == 'D' && AL0.min > 0)
+				AL0.min  -= 1;
+		}
+
+		button = CheckButtonPressed();
+       	if(button == TRUE)
+		{
+			setAlarm  = 1;
 			return;
 		}
 	}
@@ -757,8 +927,19 @@ void main(void)
         /* Show Timer */
         if(timer_isTimer0Active()) // Check timer activity for optimisation
         {	
-			timer_showTimer0(5, 50);
+			if(clockType == 1)
+			{	
+				timer_showTimer0(5, 50);
+				showDate(0, 95);
+				if(setAlarm == 1)
+					showAlarm(0, 0);
+			}else{
+				showDate(0, 100);
+				if(setAlarm == 1)
+					showAlarm(0, 0);
+			}
 
+				
 			button = CheckButtonPressed();
         	if(button == TRUE){
 				mainMenu();
