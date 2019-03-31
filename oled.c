@@ -339,7 +339,33 @@ void oledPutImage(rom unsigned char *ptr, unsigned char sizex, unsigned char siz
 }
 
 	
+void PrintDigit(char letter,unsigned char col)
+{
+	int i,j,z;
+	BYTE page = 0xB0;
+	col += OFFSET;
+	
 
+	letter -= ' ';					// Adjust character to table that starts at 0x20
+	for(z = 5; z > 1; z--)
+	{
+		page +=z;
+		WriteCommand(page);
+		WriteCommand(0x00+(col&0x0F));
+		WriteCommand(0x10+((col>>4)&0x0F));
+		for(i = 0; i < 5; ++i)
+		{
+			for(j = 0 ; j < 3; ++j)
+				WriteData(g_pucNum[letter][i]);
+		}
+		page = 0xB0;
+		++letter;
+		WriteData(0x00);					// Write 1 column for buffer to next character
+	}
+
+	//WriteData(0x00);					// Write 1 column for buffer to next character
+	return;
+}	
 
 //////////////////////////////////////
 //////////////////////////////////////
