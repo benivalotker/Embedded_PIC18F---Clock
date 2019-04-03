@@ -115,12 +115,13 @@
     #error No hardware board defined, see "HardwareProfile.h" and __FILE__
 #endif
 
-
-
 //	========================	Global VARIABLES	========================
 #pragma udata
 //You can define Global Data Elements here
-
+#define FOSC        12000000
+#define CLOCK_TYPE  4
+#define PRESCALE    256
+#define RL_OFFSET   1
 //	========================	PRIVATE PROTOTYPES	========================
 static void InitializeSystem(void);
 static void ProcessIO(void);
@@ -208,6 +209,8 @@ BOOL CheckButtonPressed(void);
   
 //	========================	Application Interrupt Service Routines	========================
   //These are your actual interrupt handling routines.
+  #pragma code HIGH_INTERRUPT_VECTOR = 0x08
+  void High_ISR (void){_asm goto HighPriotiryIsr _endasm}
   #pragma interrupt YourHighPriorityISRCode
   void YourHighPriorityISRCode()
   {
@@ -227,9 +230,6 @@ BOOL CheckButtonPressed(void);
   
   } //This return will be a "retfie", since this is in a #pragma interruptlow section 
 #endif
-
-
-
 
 //	========================	Board Initialization Code	========================
 #pragma code
@@ -294,8 +294,7 @@ void UserInit(void)
 static void InitializeSystem(void)
 {
 	// Soft Start the APP_VDD
-	while(!AppPowerReady())
-		;
+	while(!AppPowerReady());
 
     #if defined(PIC18F46J50_PIM)
   //Configure all I/O pins to use digital input buffers
@@ -309,24 +308,16 @@ static void InitializeSystem(void)
 
 
 //  ========================    Application Code    ========================
-void isr_handleButtonInterrupt(void);
-void isr_handleTimer0Interrupt(void);
-void displayMode();
 void displayMode();
 void setDate();
 void Alarm();
 
+/* global variable */
 int clockType = 1;
 int setAlarm  = 0;
-//  =======================     Time ===================================
-#define FOSC        12000000
-#define CLOCK_TYPE  4
-#define PRESCALE    256
-#define RL_OFFSET   1
 
 typedef struct
 {
-    /* Current time */
     BYTE hour;
     BYTE min;
     BYTE sec;
@@ -335,7 +326,6 @@ typedef struct
 
 typedef struct
 {
-    /* Current date */
     BYTE day;
     BYTE month;
 }DATE;
@@ -346,84 +336,63 @@ typedef struct
     BYTE min;
 }ALARM;
 
-/* Internal Timer Structure to hold its current values */
+// =======================     Time =================================== 
 static TIMER TMR0;
 static DATE  DA0;
 static ALARM  AL0;
-/* Internal globals to hold the initial value of the timer registers */
 static BYTE count0L;
 static BYTE count0H;
 
 void timer_initTimer0(BOOL useInterrupt)
 {
     short count;
+    T0CONbits.TMR0ON = 0;   
+    T0CONbits.T08BIT = 0;   
+    T0CONbits.T0CS = 0;     
+    T0CONbits.PSA = 0;      
+    T0CONbits.T0PS = 7;    
+    INTCONbits.TMR0IF = 0;  
 
-    /* Timer Configuration */
-    T0CONbits.TMR0ON = 0;   // Deactivate timer
-    T0CONbits.T08BIT = 0;   // Set timer to 16 bit
-    T0CONbits.T0CS = 0;     // Set internal clock source (Fosc/4)
-    T0CONbits.PSA = 0;      // Use prescaler
-    T0CONbits.T0PS = 7;     // Set prescaler to 1:256
-    INTCONbits.TMR0IF = 0;  // Clear the interrupt flag
-
-    /* Clear the timer's values */
-    TMR0.hour = 12;
-    TMR0.min = 0;
-    TMR0.sec = 0;
+    TMR0.hour = 23;
+    TMR0.min = 59;
+    TMR0.sec = 50;
     TMR0.hSec = 0;
 
-	/* clear the date */
-	DA0.day = 01;
-	DA0.month = 01;
+	DA0.day = 31;
+	DA0.month = 12;
 
-	/* Clear the alarm values */
     AL0.hour = 0;
     AL0.min = 0;
  
-    /* Compute the counting registers values */
-    count = 0xFFFF - (FOSC/CLOCK_TYPE/PRESCALE/100) + RL_OFFSET; // Set count to centisecond
+    count = 0xFFFF - (FOSC/CLOCK_TYPE/PRESCALE/100) + RL_OFFSET; 
     count0H = (count >> 8);
     count0L = (count % (1 << 8));
 
-    /* Configure interrupts if flagged */
     if(useInterrupt)
     {
-        INTCON2bits.TMR0IP = 1; // Set high interrupt priority
-        INTCONbits.TMR0IE = 1;  // Set interrupts enabled
-        INTCONbits.TMR0IF = 0;  // Clear interrupt flag
+        INTCON2bits.TMR0IP = 1; 
+        INTCONbits.TMR0IE = 1;  
+        INTCONbits.TMR0IF = 0;  
     }   
 }
 
 void timer_startTimer0(void)
 { 
-    TMR0H = count0H;            // Assign the MSB register.
-    TMR0L = count0L;            // Assign the LSB register.
-
-    T0CONbits.TMR0ON = 1;   // Activate timer
-
-    INTCONbits.TMR0IF = 0;  // Clear the interrupt flag
-}
-
-void timer_stopTimer0(void)
-{
-    T0CONbits.TMR0ON = 0;   // Deactivate timer
-    INTCONbits.TMR0IF = 0;  // Clear the interrupt flag
+    TMR0H = count0H;            
+    TMR0L = count0L;            
+    T0CONbits.TMR0ON = 1;   
+    INTCONbits.TMR0IF = 0;  
 }
 
 void timer_showTimer0(int y, int x)
 {
-    static BYTE timer[20] = ""; // Time message buffer
-
-    /* Parse time message */
+    static BYTE timer[20] = ""; 
     sprintf((char*)timer, "%02u:%02u:%02u", TMR0.hour, TMR0.min, TMR0.sec);
-
-    /* Put time message in the screen */
     oledPutString(timer, y, x);		
 }
 
 void timer_increamentTimer0(BYTE inc)
 {
-    //Increament the total value of the timer by inc centiseconed 
     TMR0.hSec += inc;
     if(TMR0.hSec >= 100)
     {
@@ -451,63 +420,22 @@ BOOL timer_isTimer0Active(void)
     return T0CONbits.TMR0ON;
 }
 
-
-BOOL timer_isTimer0Interrupt(void)
-{
-    return INTCONbits.TMR0IF;
-}
-
-
-//  ========================     ISR ===================================
-
-void isr_enableGlobalInterrupts(void)
-{
-    /* Global Configuration */
-    INTCONbits.GIEH = 1;    // Enable high priority interrupts
-    RCONbits.IPEN = 1;      // Enable interrupt priority
-}
-
-void isr_handleButtonInterrupt(void)
-{
-    /* Check Timer0 Flag */
-    if(timer_isTimer0Active())
-        /* Stop Timer0 */
-        timer_stopTimer0();
-    else
-        /* Start Timer0 */
-        timer_startTimer0();
-}
-
-void isr_handleTimer0Interrupt(void)
-{
-    /* Rewind Timer */
-    timer_startTimer0();
-
-    /* Reset WatchDog Timer */
-    _asm CLRWDT _endasm
-
-    /* Update Structure */
-    timer_increamentTimer0(1);
-}
-
 void HighPriotiryIsr(void)
 {
-    INTCONbits.GIE = 0; // Disable interrupts to avoid chain interrupts
-
-     //Check Timer0 Interrupt 
-    if(timer_isTimer0Interrupt())
-        isr_handleTimer0Interrupt();    // Call the handler of this interrupt
-
-    INTCONbits.GIE = 1; // Enable interrupts
+    INTCONbits.GIE = 0; 
+    if(INTCONbits.TMR0IF)
+	{
+    	timer_startTimer0();
+    	_asm CLRWDT _endasm
+	    timer_increamentTimer0(1);
+	}
+    INTCONbits.GIE = 1; 
 }
 
-#pragma code HIGH_INTERRUPT_VECTOR = 0x08
-void High_ISR (void){_asm goto HighPriotiryIsr _endasm}
 
 //  =======================  button ================================
 BOOL CheckButtonPressed(void)
 {
-
     static char buttonPressed = FALSE;					
     static unsigned long buttonPressCounter = 0;  
 
@@ -545,36 +473,23 @@ char touchButtons()
 	left   = mTouchReadButton(3);
 	scrollU = mTouchReadButton(1);
 	scrollD = mTouchReadButton(2);
-	ADCON0 = 0b00010011;								//potentiometer declire again 								
+	ADCON0 = 0b00010011;								 								
 
-	//chack left touch
-	if(!(left > 800))
-		return 'L';
-	
-	//chack left touch
-	if(!(right > 800))
-		return 'R';
-
-	//chack  scroll
-	if(scrollU > 965)									
-		return 'U';
-	if(scrollD > 980)
-		return 'D';
-
+	if(!(left > 800)) return 'L';
+	if(!(right > 800)) return 'R';
+	if(scrollU > 965) return 'U';
+	if(scrollD > 980) return 'D';
 }
 
 int potentiometer()
 {
-	int i;
 	char str[30];
 
 	ADCON0bits.CHS = 4;		
 	ADCON0bits.GO = 1;	
 	while(ADCON0bits.GO);
-
 	itoa(ADRES, str);					
 
-	//Fill the selected item in main menu bt potentimeter current value
 	if(ADRES <= 1200 && ADRES > 750){ return 6;}
 	if(ADRES < 750 && ADRES > 500){ return 5;}
 	if(ADRES < 500 && ADRES > 250){ return 4;}
@@ -585,24 +500,22 @@ int potentiometer()
 void mainMenu()
 {
  	int potenNum;
-	BOOL button;
 	FillDisplay(0x00);
 	
 	while(1)
 	{
 		timer_showTimer0(0, 80);
+		potenNum = potentiometer();
 		oledPutROMString("CLOCK MENU",0,0) ;
 		oledPutROMString("1 - Display Mode  ",3,0) ;
 		oledPutROMString("2 - Set Time      ",4,0) ;
 		oledPutROMString("3 - Set Date      ",5,0) ;	
 		oledPutROMString("4 - Alarm         ",6,0) ;
 
-		potenNum = potentiometer();
 		oledWriteChar1x(0x3C, potenNum   + 0xB0,120);
 		oledWriteChar1x(0x20, potenNum-1 + 0xB0,120);
 		oledWriteChar1x(0x20, potenNum+1 + 0xB0,120);
 		
-
        	if(CheckButtonPressed() == TRUE){
 			switch(potenNum)
 			{
@@ -680,6 +593,7 @@ setTime()
 {
 	char touch = 'F';
 	int count = 0; 
+
 	int row = 50;
 	int potenNum;
     BOOL button;
@@ -689,7 +603,6 @@ setTime()
 	int sec = TMR0.sec;	
 	FillDisplay(0x00);
 		
-
 	while(1)
 	{
 		TMR0.sec = count ;
@@ -725,7 +638,7 @@ setTime()
 		}
 	
 		if(row == 50){
-			if(touch == 'U' && TMR0.hour < 24)
+			if(touch == 'U' && TMR0.hour < 23)
 				TMR0.hour  += 1;
 			if(touch == 'D' && TMR0.hour > 1)
 				TMR0.hour  -= 1;
@@ -769,7 +682,7 @@ setTime()
 
 showDate(int y, int x)
 {
-	static BYTE date[20] = ""; // Time message buffer
+	static BYTE date[20] = ""; 
     sprintf((char*)date, "%02u/%02u", DA0.day , DA0.month);
     oledPutString(date, y, x);
 }
@@ -840,7 +753,7 @@ void setDate()
 
 showAlarm(int y, int x)
 {
-	static BYTE alarm[20] = ""; // Time message buffer
+	static BYTE alarm[20] = ""; 
     sprintf((char*)alarm, "%02u:%02u", AL0.hour, AL0.min);
     oledPutString(alarm, y, x);
 }
@@ -881,7 +794,7 @@ void Alarm()
 		}
 				
 		if(row == 50){
-			if(touch == 'U' && AL0.hour < 24)
+			if(touch == 'U' && AL0.hour < 23)
 				AL0.hour  += 1;
 			if(touch == 'D' && AL0.hour > 1)
 				AL0.hour  -= 1;
@@ -918,8 +831,8 @@ void printDigitalClock()
 
 	for(i = 0; i < 3 ; ++i)
 	{
-		tempTime[0] = timer[i] / 10;   		// getting the msb digit
-		tempTime[1] = timer[i] % 10;	    // getting the lsb digit		
+		tempTime[0] = timer[i] / 10;   		
+		tempTime[1] = timer[i] % 10;	    		
 		 
 		
 		for(x = 0; x < 2; ++x)
@@ -968,6 +881,28 @@ void printDigitalClock()
 	}
 }
 
+chackTime()
+{
+	if(TMR0.hour == 23 && TMR0.min == 59 && TMR0.sec == 59)
+	{
+		TMR0.hour = 0;
+		TMR0.min = 0;
+		TMR0.sec = 0;
+
+		if(DA0.day == 31)
+		{	
+			DA0.day = 1;
+			if(DA0.month == 12)
+				DA0.month = 1;
+			else
+				DA0.month += 1;
+		}
+		else
+			DA0.day = DA0.day + 1;
+    	if(DA0.month == 12)
+			DA0.month = 1;	
+	}
+}
 /********************************************************************
  * Function:        void main(void)
  *
@@ -989,42 +924,40 @@ void main(void)
 	BOOL button;
 
 	InitializeSystem();
-
-    /* Initialize Timer */
-    timer_initTimer0(TRUE); // Initiate timer0 to count 1centiseconds and invoke its interrupts.
-    //timer_showTimer0();
-
-    /* Initialize Interrupts */
-    isr_enableGlobalInterrupts();
-
-    /* Start Timer0 */
+    timer_initTimer0(TRUE); 
+    INTCONbits.GIEH = 1;    
+    RCONbits.IPEN = 1;      
     timer_startTimer0();
-
-    /* Init WatchDog Timer */
     WDTCONbits.SWDTEN = 1;
 		
     while(1)                            //Main is Usualy an Endless Loop
     {
-        /* Show Timer */
+        
         if(timer_isTimer0Active()) // Check timer activity for optimisation
         {	
 			if(clockType == 1)
 			{	
-				//timer_showTimer0(5, 50);
-				showDate(0, 95);
+				showDate(7, 95);
 				printDigitalClock();
+				chackTime();
 				if(setAlarm == 1)
 					showAlarm(0, 0);
 			}else{
 				showDate(0, 100);
+				//Analog view
 				if(setAlarm == 1)
 					showAlarm(0, 0);
 			}
 
-				
 			button = CheckButtonPressed();
         	if(button == TRUE){
 				mainMenu();
+			}
+
+			if(setAlarm == 1 && AL0.hour == TMR0.hour && AL0.min == TMR0.min)
+			{
+ 				if(TMR0.sec <= 20) 
+					FillDisplay(0x00);		
 			}
 		}   
     }

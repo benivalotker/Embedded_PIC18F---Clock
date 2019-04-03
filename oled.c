@@ -345,8 +345,7 @@ void PrintDigit(char letter,unsigned char col)
 	BYTE page = 0xB0;
 	col += OFFSET;
 	
-
-	letter -= ' ';					// Adjust character to table that starts at 0x20
+	letter -= ' ';					
 	for(z = 5; z > 1; z--)
 	{
 		page +=z;
@@ -360,10 +359,9 @@ void PrintDigit(char letter,unsigned char col)
 		}
 		page = 0xB0;
 		++letter;
-		WriteData(0x00);					// Write 1 column for buffer to next character
+		WriteData(0x00);					
 	}
 
-	//WriteData(0x00);					// Write 1 column for buffer to next character
 	return;
 }	
 
