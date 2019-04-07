@@ -59,7 +59,7 @@
 #include "oled.h"
 
 #include "soft_start.h"
-
+#include "OledGraphics.h"
 
 //	========================	CONFIGURATION	========================
 
@@ -315,6 +315,9 @@ void Alarm();
 /* global variable */
 int clockType = 1;
 int setAlarm  = 0;
+int _x[60];
+	int  _y[60];
+
 
 typedef struct
 {
@@ -541,6 +544,8 @@ void mainMenu()
 			FillDisplay(0x00);
 			return;
 		}
+		chackTime();
+		chackAlarm();
 	} 
 }
 
@@ -586,6 +591,8 @@ void displayMode()
 			FillDisplay(0x00);
 			return;
 		}
+		chackTime();
+		chackAlarm();
 	}
 }
 
@@ -677,6 +684,8 @@ setTime()
 		{
 			return;
 		}
+		chackTime();
+		chackAlarm();
 	}
 }
 
@@ -748,6 +757,8 @@ void setDate()
 		{
 			return;
 		}
+		chackTime();
+		chackAlarm();
 	}
 }
 
@@ -796,7 +807,7 @@ void Alarm()
 		if(row == 50){
 			if(touch == 'U' && AL0.hour < 23)
 				AL0.hour  += 1;
-			if(touch == 'D' && AL0.hour > 1)
+			if(touch == 'D' && AL0.hour > 0)
 				AL0.hour  -= 1;
 		}
 
@@ -817,6 +828,8 @@ void Alarm()
 			setAlarm  = 1;
 			return;
 		}
+		chackTime();
+		chackAlarm();
 
 	}
 }
@@ -903,6 +916,30 @@ chackTime()
 			DA0.month = 1;	
 	}
 }
+
+chackAlarm()
+{
+	if(setAlarm == 1 && AL0.hour == TMR0.hour && AL0.min == TMR0.min)
+	{
+		if(TMR0.sec <= 20)
+		{
+			if(CheckButtonPressed())
+			{
+				setAlarm = 0;
+				return 0;
+			}
+			FillDisplay(0x00);
+		}					
+	}
+}
+
+analog()
+{
+	
+	drawLine(0x00,0x01,0x02,0x03,fat);
+		
+	
+}
 /********************************************************************
  * Function:        void main(void)
  *
@@ -944,7 +981,10 @@ void main(void)
 					showAlarm(0, 0);
 			}else{
 				showDate(0, 100);
-				//Analog view
+				//Analog Clock
+				analog();
+				
+
 				if(setAlarm == 1)
 					showAlarm(0, 0);
 			}
@@ -954,11 +994,8 @@ void main(void)
 				mainMenu();
 			}
 
-			if(setAlarm == 1 && AL0.hour == TMR0.hour && AL0.min == TMR0.min)
-			{
- 				if(TMR0.sec <= 20) 
-					FillDisplay(0x00);		
-			}
+			chackAlarm();
+			
 		}   
     }
 }//end main
