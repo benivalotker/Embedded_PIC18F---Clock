@@ -1,44 +1,42 @@
-Warning[2066] D:\Workspace\Embeded\mplab\Shenkar\beni + michael final project\main.c 393 : type qualifier mismatch in assignment
-Warning[2058] D:\Workspace\Embeded\mplab\Shenkar\beni + michael final project\main.c 511 : call of function without prototype
-Warning[2054] D:\Workspace\Embeded\mplab\Shenkar\beni + michael final project\main.c 512 : suspicious pointer conversion
-Warning[2054] D:\Workspace\Embeded\mplab\Shenkar\beni + michael final project\main.c 513 : suspicious pointer conversion
-Warning[2054] D:\Workspace\Embeded\mplab\Shenkar\beni + michael final project\main.c 514 : suspicious pointer conversion
-Warning[2054] D:\Workspace\Embeded\mplab\Shenkar\beni + michael final project\main.c 515 : suspicious pointer conversion
-Warning[2054] D:\Workspace\Embeded\mplab\Shenkar\beni + michael final project\main.c 516 : suspicious pointer conversion
-Warning[2058] D:\Workspace\Embeded\mplab\Shenkar\beni + michael final project\main.c 526 : call of function without prototype
-Warning[2058] D:\Workspace\Embeded\mplab\Shenkar\beni + michael final project\main.c 529 : call of function without prototype
+Warning[2066] D:\Workspace\Embeded\mplab\Shenkar\beni + michael final project\main.c 399 : type qualifier mismatch in assignment
+Warning[2058] D:\Workspace\Embeded\mplab\Shenkar\beni + michael final project\main.c 517 : call of function without prototype
+Warning[2054] D:\Workspace\Embeded\mplab\Shenkar\beni + michael final project\main.c 518 : suspicious pointer conversion
+Warning[2054] D:\Workspace\Embeded\mplab\Shenkar\beni + michael final project\main.c 519 : suspicious pointer conversion
+Warning[2054] D:\Workspace\Embeded\mplab\Shenkar\beni + michael final project\main.c 520 : suspicious pointer conversion
+Warning[2054] D:\Workspace\Embeded\mplab\Shenkar\beni + michael final project\main.c 521 : suspicious pointer conversion
+Warning[2054] D:\Workspace\Embeded\mplab\Shenkar\beni + michael final project\main.c 522 : suspicious pointer conversion
 Warning[2058] D:\Workspace\Embeded\mplab\Shenkar\beni + michael final project\main.c 532 : call of function without prototype
 Warning[2058] D:\Workspace\Embeded\mplab\Shenkar\beni + michael final project\main.c 535 : call of function without prototype
-Warning[2058] D:\Workspace\Embeded\mplab\Shenkar\beni + michael final project\main.c 542 : call of function without prototype
-Warning[2058] D:\Workspace\Embeded\mplab\Shenkar\beni + michael final project\main.c 547 : call of function without prototype
+Warning[2058] D:\Workspace\Embeded\mplab\Shenkar\beni + michael final project\main.c 538 : call of function without prototype
+Warning[2058] D:\Workspace\Embeded\mplab\Shenkar\beni + michael final project\main.c 541 : call of function without prototype
 Warning[2058] D:\Workspace\Embeded\mplab\Shenkar\beni + michael final project\main.c 548 : call of function without prototype
-Warning[2054] D:\Workspace\Embeded\mplab\Shenkar\beni + michael final project\main.c 562 : suspicious pointer conversion
-Warning[2054] D:\Workspace\Embeded\mplab\Shenkar\beni + michael final project\main.c 563 : suspicious pointer conversion
-Warning[2054] D:\Workspace\Embeded\mplab\Shenkar\beni + michael final project\main.c 564 : suspicious pointer conversion
-Warning[2058] D:\Workspace\Embeded\mplab\Shenkar\beni + michael final project\main.c 566 : call of function without prototype
-Warning[2058] D:\Workspace\Embeded\mplab\Shenkar\beni + michael final project\main.c 594 : call of function without prototype
-Warning[2058] D:\Workspace\Embeded\mplab\Shenkar\beni + michael final project\main.c 595 : call of function without prototype
-Warning[2068] D:\Workspace\Embeded\mplab\Shenkar\beni + michael final project\main.c 599 : obsolete use of implicit 'int' detected
-Warning[2058] D:\Workspace\Embeded\mplab\Shenkar\beni + michael final project\main.c 617 : call of function without prototype
-Warning[2058] D:\Workspace\Embeded\mplab\Shenkar\beni + michael final project\main.c 618 : call of function without prototype
-Warning[2053] D:\Workspace\Embeded\mplab\Shenkar\beni + michael final project\main.c 681 : return value expected
-Warning[2053] D:\Workspace\Embeded\mplab\Shenkar\beni + michael final project\main.c 685 : return value expected
-Warning[2058] D:\Workspace\Embeded\mplab\Shenkar\beni + michael final project\main.c 687 : call of function without prototype
-Warning[2058] D:\Workspace\Embeded\mplab\Shenkar\beni + michael final project\main.c 688 : call of function without prototype
-Warning[2068] D:\Workspace\Embeded\mplab\Shenkar\beni + michael final project\main.c 692 : obsolete use of implicit 'int' detected
-Warning[2066] D:\Workspace\Embeded\mplab\Shenkar\beni + michael final project\main.c 695 : type qualifier mismatch in assignment
-Warning[2058] D:\Workspace\Embeded\mplab\Shenkar\beni + michael final project\main.c 716 : call of function without prototype
-Warning[2058] D:\Workspace\Embeded\mplab\Shenkar\beni + michael final project\main.c 717 : call of function without prototype
-Warning[2058] D:\Workspace\Embeded\mplab\Shenkar\beni + michael final project\main.c 760 : call of function without prototype
-Warning[2058] D:\Workspace\Embeded\mplab\Shenkar\beni + michael final project\main.c 761 : call of function without prototype
-Warning[2068] D:\Workspace\Embeded\mplab\Shenkar\beni + michael final project\main.c 765 : obsolete use of implicit 'int' detected
-Warning[2066] D:\Workspace\Embeded\mplab\Shenkar\beni + michael final project\main.c 768 : type qualifier mismatch in assignment
-Warning[2058] D:\Workspace\Embeded\mplab\Shenkar\beni + michael final project\main.c 786 : call of function without prototype
-Warning[2058] D:\Workspace\Embeded\mplab\Shenkar\beni + michael final project\main.c 787 : call of function without prototype
-Warning[2058] D:\Workspace\Embeded\mplab\Shenkar\beni + michael final project\main.c 831 : call of function without prototype
-Warning[2058] D:\Workspace\Embeded\mplab\Shenkar\beni + michael final project\main.c 832 : call of function without prototype
-Warning[2058] D:\Workspace\Embeded\mplab\Shenkar\beni + michael final project\main.c 856 : call of function without prototype
-Warning[2058] D:\Workspace\Embeded\mplab\Shenkar\beni + michael final project\main.c 859 : call of function without prototype
+Warning[2058] D:\Workspace\Embeded\mplab\Shenkar\beni + michael final project\main.c 553 : call of function without prototype
+Warning[2058] D:\Workspace\Embeded\mplab\Shenkar\beni + michael final project\main.c 554 : call of function without prototype
+Warning[2054] D:\Workspace\Embeded\mplab\Shenkar\beni + michael final project\main.c 568 : suspicious pointer conversion
+Warning[2054] D:\Workspace\Embeded\mplab\Shenkar\beni + michael final project\main.c 569 : suspicious pointer conversion
+Warning[2054] D:\Workspace\Embeded\mplab\Shenkar\beni + michael final project\main.c 570 : suspicious pointer conversion
+Warning[2058] D:\Workspace\Embeded\mplab\Shenkar\beni + michael final project\main.c 572 : call of function without prototype
+Warning[2058] D:\Workspace\Embeded\mplab\Shenkar\beni + michael final project\main.c 600 : call of function without prototype
+Warning[2058] D:\Workspace\Embeded\mplab\Shenkar\beni + michael final project\main.c 601 : call of function without prototype
+Warning[2068] D:\Workspace\Embeded\mplab\Shenkar\beni + michael final project\main.c 605 : obsolete use of implicit 'int' detected
+Warning[2058] D:\Workspace\Embeded\mplab\Shenkar\beni + michael final project\main.c 623 : call of function without prototype
+Warning[2058] D:\Workspace\Embeded\mplab\Shenkar\beni + michael final project\main.c 624 : call of function without prototype
+Warning[2053] D:\Workspace\Embeded\mplab\Shenkar\beni + michael final project\main.c 687 : return value expected
+Warning[2053] D:\Workspace\Embeded\mplab\Shenkar\beni + michael final project\main.c 691 : return value expected
+Warning[2058] D:\Workspace\Embeded\mplab\Shenkar\beni + michael final project\main.c 693 : call of function without prototype
+Warning[2058] D:\Workspace\Embeded\mplab\Shenkar\beni + michael final project\main.c 694 : call of function without prototype
+Warning[2068] D:\Workspace\Embeded\mplab\Shenkar\beni + michael final project\main.c 698 : obsolete use of implicit 'int' detected
+Warning[2066] D:\Workspace\Embeded\mplab\Shenkar\beni + michael final project\main.c 701 : type qualifier mismatch in assignment
+Warning[2058] D:\Workspace\Embeded\mplab\Shenkar\beni + michael final project\main.c 722 : call of function without prototype
+Warning[2058] D:\Workspace\Embeded\mplab\Shenkar\beni + michael final project\main.c 723 : call of function without prototype
+Warning[2058] D:\Workspace\Embeded\mplab\Shenkar\beni + michael final project\main.c 766 : call of function without prototype
+Warning[2058] D:\Workspace\Embeded\mplab\Shenkar\beni + michael final project\main.c 767 : call of function without prototype
+Warning[2068] D:\Workspace\Embeded\mplab\Shenkar\beni + michael final project\main.c 771 : obsolete use of implicit 'int' detected
+Warning[2066] D:\Workspace\Embeded\mplab\Shenkar\beni + michael final project\main.c 774 : type qualifier mismatch in assignment
+Warning[2058] D:\Workspace\Embeded\mplab\Shenkar\beni + michael final project\main.c 792 : call of function without prototype
+Warning[2058] D:\Workspace\Embeded\mplab\Shenkar\beni + michael final project\main.c 793 : call of function without prototype
+Warning[2058] D:\Workspace\Embeded\mplab\Shenkar\beni + michael final project\main.c 837 : call of function without prototype
+Warning[2058] D:\Workspace\Embeded\mplab\Shenkar\beni + michael final project\main.c 838 : call of function without prototype
 Warning[2058] D:\Workspace\Embeded\mplab\Shenkar\beni + michael final project\main.c 862 : call of function without prototype
 Warning[2058] D:\Workspace\Embeded\mplab\Shenkar\beni + michael final project\main.c 865 : call of function without prototype
 Warning[2058] D:\Workspace\Embeded\mplab\Shenkar\beni + michael final project\main.c 868 : call of function without prototype
@@ -47,14 +45,19 @@ Warning[2058] D:\Workspace\Embeded\mplab\Shenkar\beni + michael final project\ma
 Warning[2058] D:\Workspace\Embeded\mplab\Shenkar\beni + michael final project\main.c 877 : call of function without prototype
 Warning[2058] D:\Workspace\Embeded\mplab\Shenkar\beni + michael final project\main.c 880 : call of function without prototype
 Warning[2058] D:\Workspace\Embeded\mplab\Shenkar\beni + michael final project\main.c 883 : call of function without prototype
-Warning[2068] D:\Workspace\Embeded\mplab\Shenkar\beni + michael final project\main.c 897 : obsolete use of implicit 'int' detected
-Warning[2068] D:\Workspace\Embeded\mplab\Shenkar\beni + michael final project\main.c 920 : obsolete use of implicit 'int' detected
-Warning[2068] D:\Workspace\Embeded\mplab\Shenkar\beni + michael final project\main.c 936 : obsolete use of implicit 'int' detected
-Warning[2058] D:\Workspace\Embeded\mplab\Shenkar\beni + michael final project\main.c 978 : call of function without prototype
-Warning[2058] D:\Workspace\Embeded\mplab\Shenkar\beni + michael final project\main.c 985 : call of function without prototype
-Warning[2058] D:\Workspace\Embeded\mplab\Shenkar\beni + michael final project\main.c 994 : call of function without prototype
-Warning[2065] D:\Workspace\Embeded\mplab\Shenkar\beni + michael final project\main.c 997 : static function 'YourLowPriorityISRCode' never referenced
-Warning[2065] D:\Workspace\Embeded\mplab\Shenkar\beni + michael final project\main.c 997 : static function 'YourHighPriorityISRCode' never referenced
-Warning[2065] D:\Workspace\Embeded\mplab\Shenkar\beni + michael final project\main.c 997 : static function 'YourLowPriorityISRCode' never referenced
-Warning[2065] D:\Workspace\Embeded\mplab\Shenkar\beni + michael final project\main.c 997 : static function 'YourHighPriorityISRCode' never referenced
-Warning[2064] D:\Workspace\Embeded\mplab\Shenkar\beni + michael final project\main.c 997 : static function 'ProcessIO' not defined
+Warning[2058] D:\Workspace\Embeded\mplab\Shenkar\beni + michael final project\main.c 886 : call of function without prototype
+Warning[2058] D:\Workspace\Embeded\mplab\Shenkar\beni + michael final project\main.c 889 : call of function without prototype
+Warning[2068] D:\Workspace\Embeded\mplab\Shenkar\beni + michael final project\main.c 903 : obsolete use of implicit 'int' detected
+Warning[2068] D:\Workspace\Embeded\mplab\Shenkar\beni + michael final project\main.c 926 : obsolete use of implicit 'int' detected
+Warning[2058] D:\Workspace\Embeded\mplab\Shenkar\beni + michael final project\main.c 949 : call of function without prototype
+Warning[2058] D:\Workspace\Embeded\mplab\Shenkar\beni + michael final project\main.c 950 : call of function without prototype
+Warning[2068] D:\Workspace\Embeded\mplab\Shenkar\beni + michael final project\main.c 956 : obsolete use of implicit 'int' detected
+Warning[2058] D:\Workspace\Embeded\mplab\Shenkar\beni + michael final project\main.c 1017 : call of function without prototype
+Warning[2058] D:\Workspace\Embeded\mplab\Shenkar\beni + michael final project\main.c 1024 : call of function without prototype
+Warning[2058] D:\Workspace\Embeded\mplab\Shenkar\beni + michael final project\main.c 1025 : call of function without prototype
+Warning[2058] D:\Workspace\Embeded\mplab\Shenkar\beni + michael final project\main.c 1034 : call of function without prototype
+Warning[2065] D:\Workspace\Embeded\mplab\Shenkar\beni + michael final project\main.c 1037 : static function 'YourLowPriorityISRCode' never referenced
+Warning[2065] D:\Workspace\Embeded\mplab\Shenkar\beni + michael final project\main.c 1037 : static function 'YourHighPriorityISRCode' never referenced
+Warning[2065] D:\Workspace\Embeded\mplab\Shenkar\beni + michael final project\main.c 1037 : static function 'YourLowPriorityISRCode' never referenced
+Warning[2065] D:\Workspace\Embeded\mplab\Shenkar\beni + michael final project\main.c 1037 : static function 'YourHighPriorityISRCode' never referenced
+Warning[2064] D:\Workspace\Embeded\mplab\Shenkar\beni + michael final project\main.c 1037 : static function 'ProcessIO' not defined

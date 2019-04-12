@@ -313,11 +313,17 @@ void setDate();
 void Alarm();
 
 /* global variable */
-int clockType = 1;
+int clockType = 0;
 int setAlarm  = 0;
-int _x[60];
-	int  _y[60];
 
+//analog
+int  _x[60];
+int  _y[60];
+int x_1 = 65;
+int y_1 = 31;
+int radius = 32;
+int Time[3] = {0,0,0};
+BYTE x1, y1;
 
 typedef struct
 {
@@ -933,13 +939,46 @@ chackAlarm()
 	}
 }
 
+
+// calculate all 60 points
+void minSecCalc() 
+{
+	int i, j = 45;
+	for (i = 360; i >= 0; i = i - 6) 
+	{
+		_x[j] = x_1 - (radius * cos((i * 3.14) / 180));
+	    _y[j--] = y_1 - (radius * sin((i * 3.14) / 180));
+	 	j = (j == -1) ? 59:j;
+	}
+ }
+
+/* analog second move*/
 analog()
 {
-	
-	drawLine(0x00,0x01,0x02,0x03,fat);
-		
-	
+	for (y1=10 ; y1 < 60 ; y1+=5 ) {
+		drawLine( 65, 30, 68, y1, thin ) ;
+		//minSecCalc();
+		DelayMs(100) ;
+		drawLine( 65, 30, 68, y1, thin ) ;
+	}
 }
+
+//print the analog clock 
+void printAnlogClock()
+{
+		//00, 15, 30 , 45
+		drawLine( 65, 5, 65 , 0, fat ) ;
+		drawLine( 120, 30, 125 , 30, fat ) ;
+		drawLine( 65, 59, 65 , 64, fat ) ;
+		drawLine( 10, 30, 5 , 30, fat ) ;
+
+		//10, 20, 40, 50
+		drawLine( 93, 5, 95 , 0, thick ) ;
+		drawLine( 120, 30, 125 , 30, thick ) ;
+		drawLine( 65, 59, 65 , 64, thick ) ;
+		drawLine( 10, 30, 5 , 30, thick ) ;
+}
+
 /********************************************************************
  * Function:        void main(void)
  *
@@ -980,13 +1019,14 @@ void main(void)
 				if(setAlarm == 1)
 					showAlarm(0, 0);
 			}else{
-				showDate(0, 100);
 				//Analog Clock
+				//minSecCalc();
+				printAnlogClock();
 				analog();
 				
 
-				if(setAlarm == 1)
-					showAlarm(0, 0);
+				/*if(setAlarm == 1)
+					showAlarm(0, 0);*/
 			}
 
 			button = CheckButtonPressed();
