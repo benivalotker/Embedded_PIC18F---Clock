@@ -316,14 +316,10 @@ void Alarm();
 int clockType = 0;
 int setAlarm  = 0;
 
-//analog
-int  _x[60];
-int  _y[60];
-int x_1 = 65;
-int y_1 = 31;
-int radius = 32;
-int Time[3] = {0,0,0};
-BYTE x1, y1;
+/* analog clock points */
+int _x1[60] 	 =  {/*1*/64,66,68,70,72,73,75,77,78,79,80,81,82,82,82,/*15*/82,82,82,82,81,80,79,78,77,75,74,72,70,68,66,/*30*/ 64,63,61,59,57,56,54,52,51,50,49,48,47,47,47,/*45*/25,47,47,47,48,49,50,51,52,54,55,57,59,61,63};
+rom BYTE _y1[60] =  {/*1*/10, 10,10,10,14,15,16,17,18,20,21,23,25,27,29,/*15*/ 29,32,34,36,38,40,41,43,44,45,46,47,48,48,48,/*30*/ 48,48,48,48,47,46,45,44,43,41,40,38,36,34,32,/*45*/29,29,27,25,23,22,20,18,17,16,15,14,13,13,13};
+
 
 typedef struct
 {
@@ -941,42 +937,102 @@ chackAlarm()
 
 
 // calculate all 60 points
-void minSecCalc() 
-{
-	int i, j = 45;
-	for (i = 360; i >= 0; i = i - 6) 
-	{
-		_x[j] = x_1 - (radius * cos((i * 3.14) / 180));
-	    _y[j--] = y_1 - (radius * sin((i * 3.14) / 180));
-	 	j = (j == -1) ? 59:j;
-	}
- }
 
 /* analog second move*/
 analog()
 {
-	for (y1=10 ; y1 < 60 ; y1+=5 ) {
-		drawLine( 65, 30, 68, y1, thin ) ;
-		//minSecCalc();
-		DelayMs(100) ;
-		drawLine( 65, 30, 68, y1, thin ) ;
-	}
+	int i;
+	drawLine(64, 0, 64, 5, thin);
+	drawLine(110, 31, 105, 31, thin);
+	drawLine(64, 64, 64, 59, thin);
+	drawLine(20, 31, 25,31, thin);
 }
 
 //print the analog clock 
 void printAnlogClock()
 {
-		//00, 15, 30 , 45
-		drawLine( 65, 5, 65 , 0, fat ) ;
-		drawLine( 120, 30, 125 , 30, fat ) ;
-		drawLine( 65, 59, 65 , 64, fat ) ;
-		drawLine( 10, 30, 5 , 30, fat ) ;
+	int hour;
+	FillDisplay(0x00);
 
-		//10, 20, 40, 50
-		drawLine( 93, 5, 95 , 0, thick ) ;
-		drawLine( 120, 30, 125 , 30, thick ) ;
-		drawLine( 65, 59, 65 , 64, thick ) ;
-		drawLine( 10, 30, 5 , 30, thick ) ;
+	switch(TMR0.hour){
+		case 1: 
+			hour = 5; 
+			break; 
+		case 2: 
+			hour = 10; 
+			break;
+		case 3: 
+			hour = 15; 
+			break;
+		case 4: 
+			hour = 20; 
+			break;
+		case 5: 
+			hour = 25; 
+			break;
+		case 6: 
+			hour = 30; 
+			break;
+		case 7: 
+			hour = 35; 
+			break;
+		case 8: 
+			hour = 40; 
+			break;
+		case 9: 
+			hour = 45; 
+			break;
+		case 10: 
+			hour = 50; 
+			break;
+		case 11: 
+			hour = 55; 
+			break;
+		case 12: 
+			hour = 0; 
+			break;
+		case 13: 
+			hour = 5; 
+			break; 
+		case 14: 
+			hour = 10; 
+			break;
+		case 15: 
+			hour = 15; 
+			break;
+		case 16:
+			hour = 20; 
+			break;
+		case 17: 	
+			hour = 25; 
+			break;
+		case 18: 
+			hour = 30; 
+			break;
+		case 19: 
+			hour = 35; 
+			break;
+		case 20: 
+			hour = 40; 
+			break;
+		case 21: 
+			hour = 45; 
+			break;
+		case 22: 
+			hour = 50; 
+			break;
+		case 23: 
+			hour = 55; 
+			break;
+		case 0: 
+			hour = 0; 
+			break;
+	}
+
+
+	drawLine(64, 32, _x1[TMR0.sec], _y1[TMR0.sec], thin);
+	drawLine(64, 32, _x1[TMR0.min], _y1[TMR0.min], thick);
+	drawLine(64, 32, _x1[hour], _y1[hour], fat);
 }
 
 /********************************************************************
@@ -1020,13 +1076,11 @@ void main(void)
 					showAlarm(0, 0);
 			}else{
 				//Analog Clock
-				//minSecCalc();
 				printAnlogClock();
 				analog();
-				
-
-				/*if(setAlarm == 1)
-					showAlarm(0, 0);*/
+				showDate(7, 95);
+				if(setAlarm == 1)
+					showAlarm(0, 0);
 			}
 
 			button = CheckButtonPressed();
