@@ -313,12 +313,12 @@ void setDate();
 void Alarm();
 
 /* global variable */
-int clockType = 0;
+int clockType = 1;
 int setAlarm  = 0;
 
 /* analog clock points */
-int _x1[60] 	 =  {/*1*/64,66,68,70,72,73,75,77,78,79,80,81,82,82,82,/*15*/82,82,82,82,81,80,79,78,77,75,74,72,70,68,66,/*30*/ 64,63,61,59,57,56,54,52,51,50,49,48,47,47,47,/*45*/25,47,47,47,48,49,50,51,52,54,55,57,59,61,63};
-rom BYTE _y1[60] =  {/*1*/10, 10,10,10,14,15,16,17,18,20,21,23,25,27,29,/*15*/ 29,32,34,36,38,40,41,43,44,45,46,47,48,48,48,/*30*/ 48,48,48,48,47,46,45,44,43,41,40,38,36,34,32,/*45*/29,29,27,25,23,22,20,18,17,16,15,14,13,13,13};
+BYTE _x1[61] 	 =  {/*0*/64,67,71,74,77,80,83,84,85,86,/*10*/87,89,90,91,91,/*15*/90,88,86,84,82,/*20*/82,80,78,76,74,72,70,68,66,66,/*30*/ 64,61,58,55,51,/*35*/51,50,49,48,47,/*40*/47,46,45,44,43,/*45*/43,43,43,44,45,/*50*/45,44,44,46,48,/*55*/52,55,57,60,62,62};
+BYTE _y1[61]     =  {/*0*/9,9,10,11,12,13,14,15,17,19,20,22,24,26,29,/*15*/32,34,37,40,42,43,45,46,48,50,51,52,53,54,54,/*30*/53,53,53,53,52,51,50,49,47,45,42,41,39,37,34,/*45*/32,30,27,24,22,19,17,15,14,13,11,10,10,9, 9};
 
 
 typedef struct
@@ -555,6 +555,7 @@ void displayMode()
 {
 	char touch = 'F';
 	int count = 3; 	
+	int potenNum;
 	FillDisplay(0x00);
 	oledWriteChar1x(0x3C, count + 0xB0,120);
 
@@ -566,35 +567,35 @@ void displayMode()
 		oledPutROMString("2 - Digitl Clock",4,0) ;	
 		
 		touch = touchButtons();
-		if(touch == 'U')
+		potenNum = potentiometer();
+		
+		if(potenNum == 3 || potenNum == 4)
 		{		
-			oledWriteChar1x(0x20, count + 0xB0,120);
-			count -= 1;	
-			if(count < 3)
-				count =3;
-			oledWriteChar1x(0x3C, count + 0xB0,120);
+			oledWriteChar1x(0x20, 4 + 0xB0,120);
+			oledWriteChar1x(0x3C, 3 + 0xB0,120);
 		}
-		if(touch == 'D')
-		{
-			oledWriteChar1x(0x20, count + 0xB0,120);
-			count += 1;
-			if(count > 4)
-				count = 4;
-			oledWriteChar1x(0x3C, count + 0xB0,120);
+		if(potenNum == 5 || potenNum == 6){
+			oledWriteChar1x(0x20, 3 + 0xB0,120);
+			oledWriteChar1x(0x3C, 4 + 0xB0,120);
 		}
 		
-		if(CheckButtonPressed() == TRUE)
+		chackTime();
+		chackAlarm();
+
+		if(touch == 'L')
 		{
-			if(count == 3)
+			return;
+		}
+		if(touch == 'R')
+		{
+			if(potenNum == 3 || potenNum ==4)
 				clockType = 2;
-			if(count == 4)
+			if(potenNum == 5 || potenNum == 6)
 				clockType = 1;
 
 			FillDisplay(0x00);
 			return;
 		}
-		chackTime();
-		chackAlarm();
 	}
 }
 
@@ -941,11 +942,15 @@ chackAlarm()
 /* analog second move*/
 analog()
 {
-	int i;
-	drawLine(64, 0, 64, 5, thin);
-	drawLine(110, 31, 105, 31, thin);
-	drawLine(64, 64, 64, 59, thin);
-	drawLine(20, 31, 25,31, thin);
+	drawLine(64, 0, 64, 5, thick);
+	drawLine(96, 32, 103, 32, thick);
+	drawLine(64, 64, 64, 59, thick);
+	drawLine(27, 32, 34,32, thick);
+
+	drawLine(91, 18, 97,12, thin);
+	drawLine(91,45, 97,51, thin);
+	drawLine(37, 45, 31,51, thin);
+	drawLine(37, 18, 31,12, thin);
 }
 
 //print the analog clock 
@@ -1029,7 +1034,6 @@ void printAnlogClock()
 			break;
 	}
 
-
 	drawLine(64, 32, _x1[TMR0.sec], _y1[TMR0.sec], thin);
 	drawLine(64, 32, _x1[TMR0.min], _y1[TMR0.min], thick);
 	drawLine(64, 32, _x1[hour], _y1[hour], fat);
@@ -1077,8 +1081,9 @@ void main(void)
 			}else{
 				//Analog Clock
 				printAnlogClock();
+				chackTime();
 				analog();
-				showDate(7, 95);
+				showDate(7, 0);
 				if(setAlarm == 1)
 					showAlarm(0, 0);
 			}
