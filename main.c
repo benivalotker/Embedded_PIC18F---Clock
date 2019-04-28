@@ -743,7 +743,7 @@ void AmPm(){
 		else	
 			timer_showTimer0(0, 80);
 		
-		oledPutROMString("CLOCK MENU",0,0) ;
+		oledPutROMString("PICK INTERVAL",0,0) ;
 		oledPutROMString("1 - 12H",3,0) ;
 		oledPutROMString("2 - 24H",4,0) ;
 		
@@ -801,6 +801,7 @@ setTime()
 	{
 		TMR0.sec = count ;
 		timer_showTimer0(4, 50);
+		oledPutROMString("SET TIME",0,0) ;
 		touch = touchButtons();
 		potenNum = potentiometer();
 		
@@ -900,8 +901,12 @@ void setDate()
 
 	while(1)
 	{
-		showDate(4, 50);	
-		
+		showDate(4, 50);
+		oledPutROMString("SET DATE",0,0) ;	
+		if(am_pm_clock ==1)
+			timer_showTimer1(0, 80);
+		else	
+			timer_showTimer0(0, 80);
 		touch = touchButtons();
 		potenNum = potentiometer();
 
@@ -971,7 +976,11 @@ void Alarm()
 	while(1)
 	{
 		showAlarm(4, 50);	
-
+		oledPutROMString("SET ALARM",0,0) ;
+		if(am_pm_clock ==1)
+			timer_showTimer1(0, 80);
+		else	
+			timer_showTimer0(0, 80);
 		potenNum = potentiometer();
 		touch = touchButtons();
 
@@ -1118,7 +1127,7 @@ chackAlarm()
 {
 	BOOL press;
 
-	if(setAlarm == 1 && AL0.hour == TMR0.hour && AL0.min == TMR0.min)
+	if(setAlarm == 1 && AL0.hour == TMR0.hour || AL0.hour == AMPM.hour && AL0.min == TMR0.min)
 	{
 		if(TMR0.sec <= 20)
 		{
@@ -1130,7 +1139,6 @@ chackAlarm()
 				oledWriteChar1x(0X5F, 7 + 0xB0, 50);
 				return 0;
 			}
-			oledWriteChar1x(0X5A, 7 + 0xB0, 50);
 			FillDisplay(0x00);
 		}				
 	}
