@@ -311,10 +311,13 @@ static void InitializeSystem(void)
 void displayMode();
 void setDate();
 void Alarm();
+void AmPm();
 
 /* global variable */
 int clockType = 1;
 int setAlarm  = 0;
+int am_pm_clock = 0;
+int am_pm_string = 0;
 
 /* analog clock points */
 BYTE _x1[61] 	 =  {/*0*/64,67,71,74,77,80,83,84,85,86,/*10*/87,89,90,91,91,/*15*/90,88,86,84,82,/*20*/82,80,78,76,74,72,70,68,66,66,/*30*/ 64,61,58,55,51,/*35*/51,50,49,48,47,/*40*/47,46,45,44,43,/*45*/43,43,43,44,45,/*50*/45,44,44,46,48,/*55*/52,55,57,60,62,62};
@@ -328,6 +331,11 @@ typedef struct
     BYTE sec;
     BYTE hSec;
 }TIMER;
+
+typedef struct
+{
+    BYTE hour;
+}AM;
 
 typedef struct
 {
@@ -345,6 +353,7 @@ typedef struct
 static TIMER TMR0;
 static DATE  DA0;
 static ALARM  AL0;
+static AM  AMPM;
 static BYTE count0L;
 static BYTE count0H;
 
@@ -368,6 +377,8 @@ void timer_initTimer0(BOOL useInterrupt)
 
     AL0.hour = 0;
     AL0.min = 0;
+
+	AMPM.hour = 11;
  
     count = 0xFFFF - (FOSC/CLOCK_TYPE/PRESCALE/100) + RL_OFFSET; 
     count0H = (count >> 8);
@@ -389,12 +400,118 @@ void timer_startTimer0(void)
     INTCONbits.TMR0IF = 0;  
 }
 
+BYTE getAmPmHour(){
+	switch(TMR0.hour)
+	{
+		case 0:
+			AMPM.hour = 12;		
+		break;
+		case 1:
+			AMPM.hour = 1;		
+		break;
+		case 2:
+			AMPM.hour = 2;		
+		break;
+		case 3:
+			AMPM.hour = 3;		
+		break;
+		case 4:
+			AMPM.hour = 4;		
+		break;
+		case 5:
+			AMPM.hour = 5;		
+		break;
+		case 6:
+			AMPM.hour = 6;		
+		break;
+		case 7:
+			AMPM.hour = 7;		
+		break;
+		case 8:
+			AMPM.hour = 8;		
+		break;
+		case 9:
+			AMPM.hour = 9;		
+		break;
+		case 10:
+			AMPM.hour = 10;		
+		break;
+		case 11:
+			AMPM.hour = 11;		
+		break;
+		case 12:
+			AMPM.hour = 12;		
+		break;
+
+		case 13:
+			AMPM.hour = 1;
+		break;
+		case 14:
+			AMPM.hour = 2;
+		break;
+		case 15:
+			AMPM.hour = 3;
+		break;
+		case 16:
+			AMPM.hour = 4; 
+		break;
+		case 17:
+			AMPM.hour = 5;
+		break;
+		case 18:
+			AMPM.hour = 6;
+		break;
+		case 19:
+			AMPM.hour = 7;
+		break;
+		case 20:
+			AMPM.hour = 8;
+		break;
+		case 21:
+			AMPM.hour = 9;
+		break;
+		case 22:
+			AMPM.hour = 10;
+		break;
+		case 23:
+			AMPM.hour = 11;	
+		break;
+		case 24:
+			AMPM.hour = 12;
+		break;
+		default:
+		break;
+	}
+
+	if(TMR0.hour == 0 || TMR0.hour <=  13)
+		am_pm_string = 0;
+	else
+		am_pm_string = 1;	
+
+	return AMPM.hour;
+}
+
+timer_showTimer1(int y, int x)
+{
+	
+	static BYTE timer[20] = "";
+    sprintf((char*)timer, "%02u:%02u:%02u", getAmPmHour(), TMR0.min, TMR0.sec);
+
+	if(am_pm_string == 0)
+		oledPutROMString("AM",y+1,x) ;
+	else
+		oledPutROMString("PM",y+1,x) ;
+    
+	oledPutString(timer, y, x);
+}
+
 void timer_showTimer0(int y, int x)
 {
-    static BYTE timer[20] = ""; 
+	static BYTE timer[20] = ""; 
     sprintf((char*)timer, "%02u:%02u:%02u", TMR0.hour, TMR0.min, TMR0.sec);
     oledPutString(timer, y, x);		
 }
+
 
 void timer_increamentTimer0(BYTE inc)
 {
@@ -495,7 +612,8 @@ int potentiometer()
 	while(ADCON0bits.GO);
 	itoa(ADRES, str);					
 
-	if(ADRES <= 1200 && ADRES > 750){ return 6;}
+	if(ADRES <= 1200 && ADRES > 1001){ return 7;}
+	if(ADRES <= 1000 && ADRES > 750){ return 6;}
 	if(ADRES < 750 && ADRES > 500){ return 5;}
 	if(ADRES < 500 && ADRES > 250){ return 4;}
 	if(ADRES < 250 && ADRES >= 0){ return 3;}
@@ -509,13 +627,18 @@ void mainMenu()
 	
 	while(1)
 	{
-		timer_showTimer0(0, 80);
+		if(am_pm_clock == 1)
+			timer_showTimer1(0, 80);
+		else	
+			timer_showTimer0(0, 80);
+		
 		potenNum = potentiometer();
 		oledPutROMString("CLOCK MENU",0,0) ;
 		oledPutROMString("1 - Display Mode  ",3,0) ;
 		oledPutROMString("2 - Set Time      ",4,0) ;
 		oledPutROMString("3 - Set Date      ",5,0) ;	
 		oledPutROMString("4 - Alarm         ",6,0) ;
+		oledPutROMString("5 - 12H-24H 		",7,0) ;
 
 		oledWriteChar1x(0x3C, potenNum   + 0xB0,120);
 		oledWriteChar1x(0x20, potenNum-1 + 0xB0,120);
@@ -535,6 +658,9 @@ void mainMenu()
 					break;
 				case 6:
 					Alarm();	
+					break;
+				case 7:
+					AmPm();	
 					break;
 				default:
 					break;
@@ -561,10 +687,14 @@ void displayMode()
 
 	while(1)
 	{
-		timer_showTimer0(0, 80);
+		if(am_pm_clock ==1)
+			timer_showTimer1(0, 80);
+		else	
+			timer_showTimer0(0, 80);
+		
 		oledPutROMString("CLOCK MENU",0,0) ;
 		oledPutROMString("1 - Analog Clock",3,0) ;
-		oledPutROMString("2 - Digitl Clock",4,0) ;	
+		oledPutROMString("2 - Digitl Clock",4,0) ;
 		
 		touch = touchButtons();
 		potenNum = potentiometer();
@@ -599,6 +729,59 @@ void displayMode()
 	}
 }
 
+void AmPm(){
+	char touch = 'F';
+	int count = 3; 	
+	int potenNum;
+	FillDisplay(0x00);
+	oledWriteChar1x(0x3C, count + 0xB0,120);
+
+	while(1)
+	{
+		if(am_pm_clock ==1)
+			timer_showTimer1(0, 80);
+		else	
+			timer_showTimer0(0, 80);
+		
+		oledPutROMString("CLOCK MENU",0,0) ;
+		oledPutROMString("1 - 12H",3,0) ;
+		oledPutROMString("2 - 24H",4,0) ;
+		
+		touch = touchButtons();
+		potenNum = potentiometer();
+		
+		if(potenNum == 3 || potenNum == 4)
+		{		
+			oledWriteChar1x(0x20, 4 + 0xB0,120);
+			oledWriteChar1x(0x3C, 3 + 0xB0,120);
+		}
+		if(potenNum == 5 || potenNum == 7){
+			oledWriteChar1x(0x20, 3 + 0xB0,120);
+			oledWriteChar1x(0x3C, 4 + 0xB0,120);
+		}
+		
+		chackTime();
+		chackAlarm();
+
+		if(touch == 'L')
+		{
+			return;
+		}
+		if(touch == 'R')
+		{
+			if(potenNum == 3 || potenNum ==4)
+				am_pm_clock = 1;
+			if(potenNum == 5 || potenNum == 7)
+				am_pm_clock = 0;
+
+			FillDisplay(0x00);
+			return;
+		}
+	}
+
+
+}
+
 setTime()
 {
 	char touch = 'F';
@@ -612,11 +795,12 @@ setTime()
 	int min = TMR0.min;
 	int sec = TMR0.sec;	
 	FillDisplay(0x00);
+	
 		
 	while(1)
 	{
 		TMR0.sec = count ;
-		timer_showTimer0(4, 50);	
+		timer_showTimer0(4, 50);
 		touch = touchButtons();
 		potenNum = potentiometer();
 		
@@ -647,13 +831,15 @@ setTime()
 			row =86;
 		}
 	
+		
 		if(row == 50){
 			if(touch == 'U' && TMR0.hour < 23)
 				TMR0.hour  += 1;
-			if(touch == 'D' && TMR0.hour > 1)
+			if(touch == 'D' && TMR0.hour > 0)
 				TMR0.hour  -= 1;
 		}
-
+	
+				
 		if(row == 68){
 			if(touch == 'U' && TMR0.min < 59)
 				TMR0.min   += 1;
@@ -710,7 +896,7 @@ void setDate()
 	int day = DA0.day;
 	int month = DA0.month;	
 
-	FillDisplay(0x00);
+	FillDisplay(0x00);		
 
 	while(1)
 	{
@@ -780,8 +966,8 @@ void Alarm()
     BOOL button;
 	int potenNum;	
 
-	FillDisplay(0x00);
-	
+	FillDisplay(0x00);		
+
 	while(1)
 	{
 		showAlarm(4, 50);	
@@ -789,7 +975,7 @@ void Alarm()
 		potenNum = potentiometer();
 		touch = touchButtons();
 
-		if(potenNum==3)	
+		if(potenNum==3 || potenNum==4)	
 		{
 			row =50;
 			oledWriteChar1x(0X5F, 5 + 0xB0, 50);
@@ -797,7 +983,7 @@ void Alarm()
 			oledWriteChar1x(0X20, 5 + 0xB0, 68);
 			oledWriteChar1x(0X20, 5 + 0xB0, 68+6);
 		}
-		if(potenNum == 4)
+		if(potenNum == 5 || potenNum == 6)
 		{
 			row =68;
 			oledWriteChar1x(0X20, 5 + 0xB0, 50);
@@ -845,6 +1031,14 @@ void printDigitalClock()
 	BYTE timer[] = {TMR0.hour, TMR0.min, TMR0.sec};
 	unsigned char col[3][2] = {{0,20},{48,66},{90,110}};
 
+	if(am_pm_clock == 1)
+		timer[0] = getAmPmHour();
+	
+	if(am_pm_string == 0 && am_pm_clock == 1)
+		oledPutROMString("AM",7,0) ;
+	if(am_pm_string == 1 && am_pm_clock == 1)
+		oledPutROMString("PM",7,0) ;
+	
 	for(i = 0; i < 3 ; ++i)
 	{
 		tempTime[0] = timer[i] / 10;   		
@@ -922,22 +1116,26 @@ chackTime()
 
 chackAlarm()
 {
+	BOOL press;
+
 	if(setAlarm == 1 && AL0.hour == TMR0.hour && AL0.min == TMR0.min)
 	{
 		if(TMR0.sec <= 20)
 		{
-			if(CheckButtonPressed())
-			{
+			DelayMs(30) ;
+			press  = CheckButtonPressed();
+			if(press == TRUE)
+			{	
 				setAlarm = 0;
+				oledWriteChar1x(0X5F, 7 + 0xB0, 50);
 				return 0;
 			}
+			oledWriteChar1x(0X5A, 7 + 0xB0, 50);
 			FillDisplay(0x00);
-		}					
+		}				
 	}
 }
 
-
-// calculate all 60 points
 
 /* analog second move*/
 analog()
@@ -1075,15 +1273,16 @@ void main(void)
 			{	
 				showDate(7, 95);
 				printDigitalClock();
+
 				chackTime();
 				if(setAlarm == 1)
 					showAlarm(0, 0);
 			}else{
 				//Analog Clock
 				printAnlogClock();
-				chackTime();
 				analog();
 				showDate(7, 0);
+				chackTime();
 				if(setAlarm == 1)
 					showAlarm(0, 0);
 			}
@@ -1098,8 +1297,6 @@ void main(void)
 		}   
     }
 }//end main
-
-
 
 
 /** EOF main.c *************************************************/
